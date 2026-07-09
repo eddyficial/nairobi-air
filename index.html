@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Content-Security-Policy (Security SEC-2). GitHub Pages cannot set response
+       headers, so the policy is delivered via meta. It enforces the architecture's
+       egress boundary: the ONLY connect target is the Open-Meteo air-quality API;
+       scripts and styles are 'self' (own ES modules + own stylesheet, no inline/CDN);
+       nothing else is permitted. Programmatic CSSOM styling (element.style) used for
+       band tints is not governed by style-src, so no 'unsafe-inline' is needed. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src https://air-quality-api.open-meteo.com; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" />
+  <meta name="description" content="Live air quality for five Kenyan cities in plain language, from Open-Meteo." />
+  <title>Nairobi Air — Live air quality for Kenyan cities</title>
+  <link rel="preconnect" href="https://air-quality-api.open-meteo.com" />
+  <link rel="stylesheet" href="./styles/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#city-list">Skip to city list</a>
+
+  <header class="page-head">
+    <h1 class="page-title">Nairobi Air</h1>
+    <p class="page-intro">Is it okay to be outside right now? Live air quality for five Kenyan cities, in plain language.</p>
+  </header>
+
+  <!-- All-cities-failed banner: rendered above the city list, hidden until every
+       city is simultaneously in error. aria-live announces it when it appears. -->
+  <div id="all-failed-banner" class="banner" role="alert" aria-live="polite" hidden>
+    <p class="banner__text">Live air quality data is currently unavailable for all five cities. Check your connection and try again.</p>
+    <button id="retry-all" class="btn btn--retry-all" type="button">Retry all</button>
+  </div>
+
+  <!-- Five city sections in FIXED order (Architecture §3.2). City names are present
+       in the DOM at load, before any fetch. No AQI numerals in static markup. -->
+  <main id="city-list">
+    <section id="city-nairobi" class="city" data-city-id="nairobi" data-status="loading" aria-labelledby="head-nairobi">
+      <div class="city-inner">
+        <h2 id="head-nairobi" class="city-name">Nairobi</h2>
+        <div class="city-body" aria-live="polite"></div>
+      </div>
+    </section>
+    <section id="city-mombasa" class="city" data-city-id="mombasa" data-status="loading" aria-labelledby="head-mombasa">
+      <div class="city-inner">
+        <h2 id="head-mombasa" class="city-name">Mombasa</h2>
+        <div class="city-body" aria-live="polite"></div>
+      </div>
+    </section>
+    <section id="city-kisumu" class="city" data-city-id="kisumu" data-status="loading" aria-labelledby="head-kisumu">
+      <div class="city-inner">
+        <h2 id="head-kisumu" class="city-name">Kisumu</h2>
+        <div class="city-body" aria-live="polite"></div>
+      </div>
+    </section>
+    <section id="city-nakuru" class="city" data-city-id="nakuru" data-status="loading" aria-labelledby="head-nakuru">
+      <div class="city-inner">
+        <h2 id="head-nakuru" class="city-name">Nakuru</h2>
+        <div class="city-body" aria-live="polite"></div>
+      </div>
+    </section>
+    <section id="city-eldoret" class="city" data-city-id="eldoret" data-status="loading" aria-labelledby="head-eldoret">
+      <div class="city-inner">
+        <h2 id="head-eldoret" class="city-name">Eldoret</h2>
+        <div class="city-body" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Progressive-disclosure band legend. Native <details>/<summary> for built-in
+       keyboard + screen-reader behavior. Rows are populated from AQI_BANDS by JS,
+       so no band numeral is hardcoded in this file. -->
+  <details class="legend">
+    <summary class="legend-summary">What do the colors mean?</summary>
+    <ul id="legend-rows" class="legend-list"></ul>
+  </details>
+
+  <footer class="page-foot">
+    <p>Live data from <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a>. No account, no tracking.</p>
+    <p class="loaded">Page loaded at <span id="loaded-at">—</span>. Refresh to fetch again.</p>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

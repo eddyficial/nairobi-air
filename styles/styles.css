@@ -1,0 +1,372 @@
+/* styles.css — "Editorial Data Instrument" (Web Design Direction, primary).
+   Light-mode only (sunlight legibility). Full-bleed tinted band sections, flat
+   chips at full-saturation band hue, serif verdict / grotesk numeral pairing.
+   All motion gated by prefers-reduced-motion. The AQI numeral never animates.
+
+   Typography is intentionally SYSTEM-FONT ONLY (Security SEC-1): no CSS font import,
+   no webfont CDN, no self-hosted font binaries — zero third-party egress, so the only
+   runtime network request is the Open-Meteo fetch (Architecture §1) and the footer's
+   "No tracking" claim holds exactly. The editorial serif/grotesk pairing is preserved
+   with the OS's own faces: a real serif (Georgia) for the verdict voice, the platform
+   UI grotesk (system-ui/Segoe UI) for the numeral/heading voice. */
+
+:root {
+  --ink: #1a1a1a;         /* near-black body/verdict ink — AA on every tint */
+  --ink-soft: #3a3a3a;
+  --chrome: #f6f6f4;      /* neutral page chrome between/around sections */
+  --chrome-line: #e2e2dd;
+  --focus: #0b3d91;       /* high-contrast focus ring, visible on all tints */
+  /* Grotesk voice (headings, numeral, band word): platform UI grotesk, no webfont. */
+  --sans: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Serif voice (verdict hero): a real editorial serif from the system stack. */
+  --serif: Georgia, "Times New Roman", ui-serif, serif;
+  /* Body voice: platform UI sans. */
+  --body: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --measure: 760px;
+  --tint: 13%;            /* band tint strength (UX §5: 12–15%, hue never desaturated) */
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: var(--body);
+  color: var(--ink);
+  background: var(--chrome);
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden; /* belt-and-suspenders against any full-bleed overflow */
+  /* Clearance so the fixed bottom-right legend pill never overlaps the last content
+     (footer) when scrolled to the very bottom. */
+  padding-bottom: 84px;
+}
+
+/* ---- Skip link ---- */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 16px;
+  z-index: 10;
+  border-radius: 0 0 6px 0;
+}
+.skip-link:focus { left: 0; }
+
+/* ---- Page head ---- */
+.page-head {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 28px 16px 12px;
+}
+.page-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 7vw, 3rem);
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+.page-intro {
+  font-size: clamp(1rem, 4vw, 1.2rem);
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 40ch;
+}
+
+/* ---- All-cities-failed banner ---- */
+.banner {
+  max-width: var(--measure);
+  margin: 12px auto;
+  padding: 16px;
+  background: #fff4f4;
+  border: 2px solid #b00020;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.banner[hidden] { display: none; }
+.banner__text { margin: 0; font-weight: 500; color: #7a0016; }
+
+/* ---- City sections: full-bleed tinted band ---- */
+.city {
+  /* full-bleed color field, edge to edge; content constrained inside */
+  --band: #d9d9d4; /* neutral until a success sets the real band hue */
+  background: color-mix(in srgb, var(--band) var(--tint), white);
+  border-top: 1px solid var(--chrome-line);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.city[data-status="loading"] { background: var(--chrome); }
+.city[data-status="error"] { background: #fbfbfa; }
+
+.city-inner {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 22px 16px 26px;
+}
+.city-name {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 5vw, 1.6rem);
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+/* Reveal-on-scroll entrance (one-time, gated by reduced motion). Text is at full
+   contrast the entire time — only position/opacity of the whole section eases in. */
+.city .city-body { transition: none; }
+body.motion-on .city { opacity: 0; transform: translateY(10px); transition: opacity 320ms ease-out, transform 320ms ease-out, box-shadow 150ms ease; }
+body.motion-on .city.is-visible { opacity: 1; transform: translateY(0); }
+
+/* Desktop hover lift; touch press affordance. Neither changes data state. */
+@media (hover: hover) {
+  .city:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+}
+.city:active { transform: scale(0.995); }
+
+/* ---- Band chip (full-saturation hue) ---- */
+.chip {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  background: var(--band, #d9d9d4);
+  color: var(--chip-text, #1a1a1a);
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  max-width: 100%;
+}
+.chip__number {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: clamp(2rem, 9vw, 2.8rem);
+  line-height: 1;
+}
+.chip__word {
+  font-family: var(--sans);
+  font-weight: 700;
+  /* Min 1.2rem (19.2px) at 700 weight guarantees WCAG "large text" status, so the
+     white-on-red Unhealthy chip (4.00:1) clears the 3:1 large-text AA bar; the
+     lighter bands clear 4.5:1 outright. Band hue is never altered. */
+  font-size: clamp(1.2rem, 4.5vw, 1.4rem);
+  letter-spacing: 0.01em;
+  /* wraps to a new line within the chip if needed; never truncates */
+  overflow-wrap: break-word;
+}
+.chip--skeleton {
+  min-width: 140px;
+  height: 56px;
+  background: #e6e6e1;
+  border-radius: 8px;
+}
+
+/* ---- Verdict sentence (serif hero) ---- */
+.verdict {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.15rem, 4.6vw, 1.4rem);
+  line-height: 1.4;
+  margin: 0 0 12px;
+  max-width: 46ch;
+  color: var(--ink);
+}
+.verdict-skeleton {
+  height: 3.2em;
+  background: linear-gradient(#ececE7, #ececE7);
+  border-radius: 6px;
+  max-width: 42ch;
+}
+
+.observed {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 0 0 14px;
+}
+.observed--stale { color: #8a4b00; font-weight: 600; }
+
+.city-error {
+  font-family: var(--serif);
+  font-size: clamp(1.1rem, 4.4vw, 1.3rem);
+  margin: 0 0 14px;
+  max-width: 44ch;
+}
+
+/* ---- Signature data-cell strip ---- */
+.data-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.data-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--band) 28%, white);
+  min-width: 90px;
+}
+.data-cell__label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.data-cell__value {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+body.motion-on .data-cell { animation: cell-breathe 6s ease-in-out infinite; }
+body.motion-on .data-cell:nth-child(2) { animation-delay: 0.8s; }
+body.motion-on .data-cell:nth-child(3) { animation-delay: 1.6s; }
+@keyframes cell-breathe {
+  0%, 100% { background: color-mix(in srgb, var(--band) 24%, white); }
+  50% { background: color-mix(in srgb, var(--band) 40%, white); }
+}
+
+/* ---- Buttons (44x44 min tap target) ---- */
+.btn {
+  font-family: var(--body);
+  font-size: 1rem;
+  font-weight: 600;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 20px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+.btn:hover { background: var(--ink); color: #fff; }
+.btn:active { transform: scale(0.98); }
+.btn--retry-all { align-self: flex-start; border-color: #b00020; color: #7a0016; }
+.btn--retry-all:hover { background: #b00020; color: #fff; }
+
+/* ---- Legend (persistent, reachable from anywhere in one tap — UX §2/§4.7) ----
+   Fixed to the bottom-right of the viewport so the "What do the colors mean?"
+   disclosure is a single tap away regardless of scroll position, instead of living
+   only at the page bottom. Native <details>/<summary> is preserved for built-in
+   keyboard + screen-reader behavior. column-reverse anchors the summary pill at the
+   bottom and expands the six-band list UPWARD above it, so it never opens off-screen.
+   Toggling never moves page scroll (the panel floats), satisfying §4.7's no-jump
+   requirement. Stays inside the design direction: a discreet card, not a loud FAB. */
+.legend {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column-reverse;
+  width: min(360px, calc(100vw - 32px));
+  margin: 0;
+  background: #fff;
+  border: 1px solid var(--chrome-line);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+}
+.legend-summary {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 1.05rem;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  list-style: none; /* hide default disclosure triangle; caret drawn below */
+  background: #fff;
+}
+.legend-summary::-webkit-details-marker { display: none; }
+/* A caret that flips when the disclosure is open, so the affordance reads clearly. */
+.legend-summary::after {
+  content: "";
+  margin-left: auto;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--ink-soft);
+  border-bottom: 2px solid var(--ink-soft);
+  transform: rotate(45deg); /* points down = closed */
+  transition: transform 150ms ease;
+}
+.legend[open] .legend-summary::after { transform: rotate(-135deg); } /* points up = open */
+/* List sits ABOVE the summary (column-reverse), so the separator is a top border. */
+.legend[open] .legend-summary { border-top: 1px solid var(--chrome-line); }
+.legend-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 16px 12px;
+  max-height: min(60vh, 440px);
+  overflow-y: auto;
+}
+.legend-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-top: 1px solid var(--chrome-line);
+}
+.legend-swatch {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  margin-top: 3px;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+.legend-head { font-family: var(--sans); font-weight: 500; margin: 0 0 2px; }
+.legend-desc { margin: 0; font-size: 0.92rem; color: var(--ink-soft); }
+
+/* ---- Footer ---- */
+.page-foot {
+  max-width: var(--measure);
+  margin: 28px auto 40px;
+  padding: 16px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--chrome-line);
+}
+.page-foot p { margin: 0 0 4px; }
+.page-foot a { color: #0b3d91; }
+
+/* ---- Focus visibility (visible on every tint) ---- */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---- Screen-reader-only ---- */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Breakpoints ---- */
+@media (min-width: 600px) {
+  .city-inner, .page-head, .banner, .legend, .page-foot { padding-left: 28px; padding-right: 28px; }
+}
+@media (min-width: 900px) {
+  .city-inner { padding-top: 30px; padding-bottom: 34px; }
+}
+
+/* ---- Reduced motion: kill all entrance/ambient motion, render final instantly ---- */
+@media (prefers-reduced-motion: reduce) {
+  .city, .data-cell, .btn, .skip-link {
+    animation: none !important;
+    transition: none !important;
+  }
+  .city { opacity: 1 !important; transform: none !important; }
+}
