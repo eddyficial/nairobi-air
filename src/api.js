@@ -1,15 +1,15 @@
-// api.js — the API adapter and the SOLE place a live numeric AQI/PM value is ever
-// constructed (Architecture §6 property 1). `parseAirQuality` reads fields off a
-// parsed HTTP response body and throws on any invalid/missing field — there is no
+// api.js - the API adapter and the SOLE place a live numeric AQI/PM value is ever
+// constructed (Architecture section 6 property 1). `parseAirQuality` reads fields off a
+// parsed HTTP response body and throws on any invalid/missing field - there is no
 // default value, no fallback constant, no "typical" seed. If the payload is absent
-// or invalid, this throws → an ERROR CityResult, which carries no numeric field.
+// or invalid, this throws -> an ERROR CityResult, which carries no numeric field.
 //
 // Pure `parseAirQuality` is imported directly by tests/error-states.test.mjs.
 
 import { API_BASE, FETCH_TIMEOUT_MS, STALE_THRESHOLD_MS } from "./config.js";
 
 // Build the Open-Meteo request URL for one city. Coordinates come only from the
-// City object (which comes only from src/config.js) — never a literal here.
+// City object (which comes only from src/config.js) - never a literal here.
 export function buildUrl(city) {
   return (
     API_BASE +
@@ -28,7 +28,7 @@ function requireNonNegativeNumber(value) {
 }
 
 // Format the API's local wall-clock time string (e.g. "2026-07-09T15:00") for
-// display, WITHOUT any timezone conversion — the API already reported it in the
+// display, WITHOUT any timezone conversion - the API already reported it in the
 // city's local time (timezone=auto). Falls back to the raw string if unparseable
 // in an unexpected shape (still real, never fabricated).
 function formatObservedLocal(timeString) {
@@ -40,7 +40,7 @@ function formatObservedLocal(timeString) {
   return `${Number(day)} ${monthName} ${year}, ${hour}:${minute}`;
 }
 
-// parseAirQuality(json[, now]) — pure. Validates the Open-Meteo response and
+// parseAirQuality(json[, now]) - pure. Validates the Open-Meteo response and
 // returns a normalized AirQualityReading, or THROWS (never returns a default).
 // `now` is injectable so error-states/staleness can be tested deterministically.
 export function parseAirQuality(json, now = Date.now()) {
@@ -59,7 +59,7 @@ export function parseAirQuality(json, now = Date.now()) {
     throw new Error("missing utc_offset_seconds");
   }
 
-  // Architecture §5.2 (specified exactly so the sign cannot be guessed wrong):
+  // Architecture section 5.2 (specified exactly so the sign cannot be guessed wrong):
   // current.time is local wall time; append 'Z' to read it as if UTC, then
   // subtract the offset to recover the true UTC instant of observation.
   const observedUtcMs = Date.parse(time + "Z") - offsetSeconds * 1000;
@@ -77,7 +77,7 @@ export function parseAirQuality(json, now = Date.now()) {
   };
 }
 
-// fetchCity(city) → CityResult. AbortController-bounded so a hung request becomes
+// fetchCity(city) -> CityResult. AbortController-bounded so a hung request becomes
 // an error, not an indefinite spinner. Categorizes the failure (network/timeout/
 // http/invalid) for internal use; the user-facing copy is a fixed friendly line.
 export async function fetchCity(city) {

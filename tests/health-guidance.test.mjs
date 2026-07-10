@@ -1,4 +1,4 @@
-// health-guidance.test.mjs (AC4) — every US-AQI band boundary maps to the correct
+// health-guidance.test.mjs (AC4) - every US-AQI band boundary maps to the correct
 // band word and guidance sentence. Pure, offline, deterministic. No framework:
 // node:assert + exit code. Run: `node tests/health-guidance.test.mjs` (cwd Codebase).
 
@@ -8,7 +8,7 @@ import { bandForAqi, AQI_BANDS } from "../src/aqi.js";
 let checks = 0;
 function check(fn) { fn(); checks++; }
 
-// Every boundary from Architecture §11 / Data Model §2, plus a high value.
+// Every boundary from Architecture section 11 / Data Model section 2, plus a high value.
 const boundaries = [
   [0, "Good"],
   [50, "Good"],
@@ -35,7 +35,7 @@ for (const [aqi, expectedWord] of boundaries) {
 }
 
 // Fractional AQI values in the integer band gaps must classify (floored to the EPA
-// integer convention), NEVER throw — Review M2. Before the fix, bandForAqi(50.5) hit
+// integer convention), NEVER throw - Review M2. Before the fix, bandForAqi(50.5) hit
 // the "no band matched (should be unreachable)" throw, which propagated unhandled and
 // froze that city in its loading skeleton forever. Each value below floors into a band.
 const fractional = [
@@ -62,7 +62,7 @@ for (const [aqi, expectedWord] of fractional) {
   });
 }
 
-// A representative guidance-substring check per band (functional wording, UX §5).
+// A representative guidance-substring check per band (functional wording, UX section 5).
 const guidanceMarkers = [
   [25, "Air quality is good"],
   [75, "acceptable for most people"],
@@ -78,7 +78,7 @@ for (const [aqi, marker] of guidanceMarkers) {
   });
 }
 
-// Bands are contiguous, non-overlapping, and cover [0, ∞).
+// Bands are contiguous, non-overlapping, and cover [0, Infinity).
 check(() => {
   for (let i = 0; i < AQI_BANDS.length - 1; i++) {
     assert.equal(AQI_BANDS[i].max + 1, AQI_BANDS[i + 1].min, `bands not contiguous at index ${i}`);

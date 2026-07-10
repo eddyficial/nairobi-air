@@ -1,7 +1,7 @@
-// view.js — pure `buildCityViewModel(result)` (no DOM) + thin `renderCity` DOM writer.
+// view.js - pure `buildCityViewModel(result)` (no DOM) + thin `renderCity` DOM writer.
 //
 // buildCityViewModel discriminates on CityResult.status. The `loading` and `error`
-// branches carry NO numeric field (Architecture §6 property 2, Data Model §5) — this
+// branches carry NO numeric field (Architecture section 6 property 2, Data Model section 5) - this
 // is what structurally guarantees an error/loading section renders zero numerals.
 // The pure function is imported directly by tests/error-states.test.mjs.
 
@@ -20,11 +20,11 @@ export function buildCityViewModel(result) {
   }
 
   if (result.status === "error") {
-    // No numeric field of any kind — the honesty invariant AC5 asserts.
+    // No numeric field of any kind - the honesty invariant AC5 asserts.
     return { name, status: "error", message: errorCopy(name) };
   }
 
-  // success — every numeric field traces to parseAirQuality's live reading.
+  // success - every numeric field traces to parseAirQuality's live reading.
   const reading = result.reading;
   const band = bandForAqi(reading.aqi);
   return {
@@ -35,7 +35,7 @@ export function buildCityViewModel(result) {
     verdict: band.guidance,
     observedLocalText: reading.observedLocalText,
     isStale: reading.isStale,
-    // The signature "data-cell" strip — each cell is a real live metric, labeled.
+    // The signature "data-cell" strip - each cell is a real live metric, labeled.
     dataCells: [
       { label: "PM2.5", value: reading.pm2_5, unit: "µg/m³" },
       { label: "PM10", value: reading.pm10, unit: "µg/m³" },
@@ -71,7 +71,7 @@ export function renderCity(section, vm) {
     skeletonChip.setAttribute("aria-hidden", "true");
     const skeletonLine = el("div", "verdict-skeleton");
     skeletonLine.setAttribute("aria-hidden", "true");
-    const srStatus = el("p", "sr-only", `Loading air quality for ${vm.name}…`);
+    const srStatus = el("p", "sr-only", `Loading air quality for ${vm.name}...`);
     body.append(skeletonChip, skeletonLine, srStatus);
     return;
   }
@@ -104,7 +104,7 @@ export function renderCity(section, vm) {
   const meta = el("p", "observed");
   if (vm.isStale) {
     meta.classList.add("observed--stale");
-    meta.textContent = `Data may be delayed — as of ${vm.observedLocalText}`;
+    meta.textContent = `Data may be delayed - as of ${vm.observedLocalText}`;
   } else {
     meta.textContent = `as of ${vm.observedLocalText}`;
   }

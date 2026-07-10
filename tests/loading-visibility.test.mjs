@@ -1,8 +1,8 @@
-// loading-visibility.test.mjs (Review H1 regression) — proves that on the DEFAULT
+// loading-visibility.test.mjs (Review H1 regression) - proves that on the DEFAULT
 // motion path (prefers-reduced-motion: NO), every city section is REVEALED and shows
 // its loading state immediately at load, BEFORE any fetch resolves. Before the fix,
 // `body.motion-on .city { opacity: 0 }` held until `is-visible` was added, and
-// `is-visible` was only added AFTER each city's fetch settled — so the always-visible
+// `is-visible` was only added AFTER each city's fetch settled - so the always-visible
 // city name and the loading skeleton were invisible for the entire loading window.
 //
 // The app has zero runtime dependencies (no jsdom by architecture), so this uses a
@@ -127,14 +127,14 @@ globalThis.fetch = () => new Promise(() => {});
 await import("../src/main.js");
 
 // At this point init() has run and all five loadCity() calls are suspended on the
-// never-resolving fetch — i.e. every fetch is still in flight.
+// never-resolving fetch - i.e. every fetch is still in flight.
 
 const digit = /\d/;
 for (const section of sections) {
   const name = section.dataset.cityId;
 
   // 1. The section is REVEALED on the motion path (is-visible present), so CSS
-  //    opacity is 1, not 0 — visible during the loading window, not after fetch.
+  //    opacity is 1, not 0 - visible during the loading window, not after fetch.
   check(() => assert.ok(
     section.classList.contains("is-visible"),
     `city ${name} must be revealed (is-visible) at load, before its fetch resolves`,
@@ -165,12 +165,12 @@ for (const section of sections) {
   ));
 }
 
-// motion-on is active (default path) — so this proves visibility holds WITH the fade
+// motion-on is active (default path) - so this proves visibility holds WITH the fade
 // system engaged, which is exactly the path H1 regressed on.
 check(() => assert.ok(
   body.classList.contains("motion-on"),
   "body.motion-on must be active on the default (non-reduced-motion) path",
 ));
 
-console.log(`Review H1 loading-visibility: ${checks} checks passed — all 5 cities revealed + in loading state (no numerals) before any fetch resolved, on the motion path.`);
+console.log(`Review H1 loading-visibility: ${checks} checks passed - all 5 cities revealed + in loading state (no numerals) before any fetch resolved, on the motion path.`);
 process.exit(0); // fetchCity's 10s abort timers are still pending; exit cleanly.

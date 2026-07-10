@@ -1,6 +1,6 @@
-// verify-deployed-url.mjs (AC6) — smoke-proves a live deployment. Fetches a URL and
+// verify-deployed-url.mjs (AC6) - smoke-proves a live deployment. Fetches a URL and
 // asserts HTTP 200 plus the expected content markers (page title, all five city
-// names, the Open-Meteo attribution string). Runnable against ANY URL — the public
+// names, the Open-Meteo attribution string). Runnable against ANY URL - the public
 // GitHub Pages URL after deploy, or a local server for pre-deploy verification.
 //
 // URL resolution order:

@@ -1,8 +1,8 @@
-// main.js — orchestration. On load: fire 5 parallel fetchCity calls, render each
+// main.js - orchestration. On load: fire 5 parallel fetchCity calls, render each
 // section independently as its own fetch settles (fixed city order, never re-sorted),
 // wire per-city Retry and Retry-all, the all-cities-failed banner, IntersectionObserver
-// scroll-reveal, and the ambient data-cell animation — all gated by prefers-reduced-motion.
-// No polling, no auto-retry (Architecture §7): fetches run only on load or explicit Retry.
+// scroll-reveal, and the ambient data-cell animation - all gated by prefers-reduced-motion.
+// No polling, no auto-retry (Architecture section 7): fetches run only on load or explicit Retry.
 
 import { CITIES } from "./config.js";
 import { AQI_BANDS } from "./aqi.js";
@@ -11,8 +11,8 @@ import { buildCityViewModel, renderCity } from "./view.js";
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-// Latest CityResult per city id — the app's only in-memory state. Never persisted,
-// never re-served as "current"; a reload re-fetches from scratch (Architecture §7).
+// Latest CityResult per city id - the app's only in-memory state. Never persisted,
+// never re-served as "current"; a reload re-fetches from scratch (Architecture section 7).
 const results = new Map();
 
 function sectionFor(city) {
@@ -38,7 +38,7 @@ function render(city, result) {
   updateAllFailedBanner();
 }
 
-// Independent per-city load: loading → success/error. One city never blocks another.
+// Independent per-city load: loading -> success/error. One city never blocks another.
 // Reveal is intentionally NOT called here: section visibility is decoupled from the
 // fetch lifecycle (Review H1) and driven at load time by revealAllSections(), so the
 // always-visible city name and the loading skeleton are presented immediately during
@@ -96,7 +96,7 @@ function revealSection(section) {
   revealObserver.observe(section);
 }
 
-// Reveal (or observe for reveal) EVERY city section at load — decoupled from data
+// Reveal (or observe for reveal) EVERY city section at load - decoupled from data
 // fetching (Review H1). On the default motion path this means each on-screen section
 // (its always-visible city name and its loading skeleton) becomes visible immediately
 // during the loading window; below-the-fold sections ease in on scroll via the same
@@ -126,13 +126,13 @@ function syncMotionPreference() {
 
 // ---- Wiring ----
 
-// Build the six-band legend from the quarantined AQI_BANDS table — the ONLY source
-// of band ranges/hexes — so no band numeral is ever hardcoded into index.html.
+// Build the six-band legend from the quarantined AQI_BANDS table - the ONLY source
+// of band ranges/hexes - so no band numeral is ever hardcoded into index.html.
 function buildLegend() {
   const container = document.getElementById("legend-rows");
   if (!container) return;
   for (const band of AQI_BANDS) {
-    const range = band.max === null ? `${band.min}+` : `${band.min}–${band.max}`;
+    const range = band.max === null ? `${band.min}+` : `${band.min}-${band.max}`;
     const row = document.createElement("li");
     row.className = "legend-row";
 
@@ -145,7 +145,7 @@ function buildLegend() {
     text.className = "legend-text";
     const head = document.createElement("p");
     head.className = "legend-head";
-    head.textContent = `${band.word} · ${range}`;
+    head.textContent = `${band.word} - ${range}`;
     const desc = document.createElement("p");
     desc.className = "legend-desc";
     desc.textContent = band.guidance;

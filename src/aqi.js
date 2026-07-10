@@ -1,16 +1,16 @@
-// aqi.js — QUARANTINED FILE 2 of 2 (Architecture §6 property 3, Data Model §2).
+// aqi.js - QUARANTINED FILE 2 of 2 (Architecture section 6 property 3, Data Model section 2).
 //
 // This is the ONLY file in the served app permitted to contain band-threshold
 // literals (0/50/51/.../301) and fixed band hex colors. These are *classification
-// configuration* — the boundaries of the standard US EPA AQI scale — not city
+// configuration* - the boundaries of the standard US EPA AQI scale - not city
 // measurements. No live/fetched value is declared here. No DOM, no fetch: pure,
 // so `tests/health-guidance.test.mjs` imports it directly.
 //
-// Verbatim mapping from UX Spec §5 / Data Model §2. Chip text colors are
+// Verbatim mapping from UX Spec section 5 / Data Model section 2. Chip text colors are
 // contrast-verified against their chipBg at build time (see Builder Verification.md,
-// "Contrast resolution"): near-black #1A1A1A on the three light bands (all ≥ 6.8:1),
-// white #FFFFFF on the three dark bands (all ≥ 4.5:1). The flagged orange band
-// #FF7E00 clears AA with #1A1A1A text (6.82:1) — the band hue is never altered.
+// "Contrast resolution"): near-black #1A1A1A on the three light bands (all >= 6.8:1),
+// white #FFFFFF on the three dark bands (all >= 4.5:1). The flagged orange band
+// #FF7E00 clears AA with #1A1A1A text (6.82:1) - the band hue is never altered.
 
 export const AQI_BANDS = [
   {
@@ -20,7 +20,7 @@ export const AQI_BANDS = [
     chipBg: "#00E400",
     chipText: "#1A1A1A",
     guidance:
-      "Air quality is good. It's a fine time to be outside — exercise, walk, or open the windows. No precautions needed for anyone, including sensitive groups.",
+      "Air quality is good. It's a fine time to be outside - exercise, walk, or open the windows. No precautions needed for anyone, including sensitive groups.",
   },
   {
     word: "Moderate",
@@ -29,7 +29,7 @@ export const AQI_BANDS = [
     chipBg: "#FFFF00",
     chipText: "#1A1A1A",
     guidance:
-      "Air quality is acceptable for most people. Anyone unusually sensitive to air pollution — for example, people managing asthma or a lung condition — may want to reduce prolonged or heavy outdoor exertion today.",
+      "Air quality is acceptable for most people. Anyone unusually sensitive to air pollution - for example, people managing asthma or a lung condition - may want to reduce prolonged or heavy outdoor exertion today.",
   },
   {
     word: "Unhealthy for Sensitive Groups",
@@ -38,7 +38,7 @@ export const AQI_BANDS = [
     chipBg: "#FF7E00",
     chipText: "#1A1A1A",
     guidance:
-      "Sensitive groups — children, older adults, and people with heart or lung conditions — should reduce prolonged or heavy outdoor exertion. Everyone else can generally continue normal outdoor activity.",
+      "Sensitive groups - children, older adults, and people with heart or lung conditions - should reduce prolonged or heavy outdoor exertion. Everyone else can generally continue normal outdoor activity.",
   },
   {
     word: "Unhealthy",
@@ -56,7 +56,7 @@ export const AQI_BANDS = [
     chipBg: "#8F3F97",
     chipText: "#FFFFFF",
     guidance:
-      "Air quality is very unhealthy — this is a health alert. Consider limiting outdoor activity for everyone, and sensitive groups should avoid outdoor exertion entirely today.",
+      "Air quality is very unhealthy - this is a health alert. Consider limiting outdoor activity for everyone, and sensitive groups should avoid outdoor exertion entirely today.",
   },
   {
     word: "Hazardous",
@@ -65,18 +65,18 @@ export const AQI_BANDS = [
     chipBg: "#7E0023",
     chipText: "#FFFFFF",
     guidance:
-      "Air quality is hazardous. Consider staying indoors with windows closed where possible, and avoid outdoor exertion — this level can affect the entire population, not only sensitive groups.",
+      "Air quality is hazardous. Consider staying indoors with windows closed where possible, and avoid outdoor exertion - this level can affect the entire population, not only sensitive groups.",
   },
 ];
 
-// bandForAqi(aqi) — pure. Returns the single band whose [min, max] contains aqi
+// bandForAqi(aqi) - pure. Returns the single band whose [min, max] contains aqi
 // (Hazardous is open-ended for aqi >= 301). There is NO default/fallback band:
 // a value that cannot be classified (negative, NaN, non-number) throws, because
 // such a value never should have passed parseAirQuality upstream.
 //
 // The US EPA AQI is defined as an INTEGER index, and Open-Meteo reports us_aqi as
 // an integer. But parseAirQuality's validated domain admits any finite value >= 0,
-// so the classifier must be TOTAL over that whole domain — a fractional value that
+// so the classifier must be TOTAL over that whole domain - a fractional value that
 // falls in an integer band gap (e.g. 50.5, between Good's max 50 and Moderate's min
 // 51) must classify, never hit an unhandled throw that freezes the city in loading
 // forever (Review M2). We floor to the EPA integer convention before classifying:
@@ -95,7 +95,7 @@ export function bandForAqi(aqi) {
       return band;
     }
   }
-  // Unreachable: floored bands cover every integer in [0, ∞). Defensive throw,
+  // Unreachable: floored bands cover every integer in [0, Infinity). Defensive throw,
   // never a silent default.
   throw new Error("bandForAqi: no band matched (should be unreachable)");
 }

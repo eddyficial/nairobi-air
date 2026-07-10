@@ -1,4 +1,4 @@
-// verify-live-data.mjs (AC2) — hits the REAL Open-Meteo API for all five cities,
+// verify-live-data.mjs (AC2) - hits the REAL Open-Meteo API for all five cities,
 // using the exact coordinates the app uses (imports CITIES from src/config.js, so
 // coordinate drift is caught). Asserts current.pm2_5, current.pm10, current.us_aqi
 // are present and finite for every city. Exit 0 = all five live; exit 1 = any

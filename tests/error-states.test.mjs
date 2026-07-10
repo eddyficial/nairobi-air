@@ -1,4 +1,4 @@
-// error-states.test.mjs (AC5) — the honest-error contract at the unit level:
+// error-states.test.mjs (AC5) - the honest-error contract at the unit level:
 // invalid Open-Meteo payloads make parseAirQuality throw, and the resulting error
 // view-model carries NO numeric AQI/pollutant field and no digit-bearing value.
 // Also sanity-checks the staleness sign (Architecture A7). No framework.
@@ -13,7 +13,7 @@ function check(fn) { fn(); checks++; }
 
 const CITY = { id: "nairobi", name: "Nairobi", latitude: -1.2864, longitude: 36.8172 };
 
-// --- 1. parseAirQuality throws on every invalid payload from Architecture §5.3 ---
+// --- 1. parseAirQuality throws on every invalid payload from Architecture section 5.3 ---
 const invalidPayloads = [
   ["missing current", {}],
   ["null current", { current: null }],

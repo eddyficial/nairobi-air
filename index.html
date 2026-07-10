@@ -11,7 +11,7 @@
        band tints is not governed by style-src, so no 'unsafe-inline' is needed. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src https://air-quality-api.open-meteo.com; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" />
   <meta name="description" content="Live air quality for five Kenyan cities in plain language, from Open-Meteo." />
-  <title>Nairobi Air — Live air quality for Kenyan cities</title>
+  <title>Nairobi Air - Live air quality for Kenyan cities</title>
   <link rel="preconnect" href="https://air-quality-api.open-meteo.com" />
   <link rel="stylesheet" href="./styles/styles.css" />
 </head>
@@ -30,7 +30,7 @@
     <button id="retry-all" class="btn btn--retry-all" type="button">Retry all</button>
   </div>
 
-  <!-- Five city sections in FIXED order (Architecture §3.2). City names are present
+  <!-- Five city sections in FIXED order (Architecture section 3.2). City names are present
        in the DOM at load, before any fetch. No AQI numerals in static markup. -->
   <main id="city-list">
     <section id="city-nairobi" class="city" data-city-id="nairobi" data-status="loading" aria-labelledby="head-nairobi">
@@ -75,7 +75,7 @@
 
   <footer class="page-foot">
     <p>Live data from <a href="https://open-meteo.com/" rel="noopener">Open-Meteo</a>. No account, no tracking.</p>
-    <p class="loaded">Page loaded at <span id="loaded-at">—</span>. Refresh to fetch again.</p>
+    <p class="loaded">Page loaded at <span id="loaded-at">-</span>. Refresh to fetch again.</p>
   </footer>
 
   <script type="module" src="./src/main.js"></script>
